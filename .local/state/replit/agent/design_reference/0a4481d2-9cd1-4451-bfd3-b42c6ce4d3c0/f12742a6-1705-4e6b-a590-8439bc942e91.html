@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kerala Farmers AI Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600;700&family=Noto+Sans+Malayalam:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                borderRadius: {
+                    lg: "var(--radius)",
+                    md: "calc(var(--radius) - 2px)",
+                    sm: "calc(var(--radius) - 4px)",
+                },
+                colors: {
+                    background: "var(--background)",
+                    foreground: "var(--foreground)",
+                    card: {
+                        DEFAULT: "var(--card)",
+                        foreground: "var(--card-foreground)",
+                    },
+                    primary: {
+                        DEFAULT: "var(--primary)",
+                        foreground: "var(--primary-foreground)",
+                    },
+                    secondary: {
+                        DEFAULT: "var(--secondary)",
+                        foreground: "var(--secondary-foreground)",
+                    },
+                    muted: {
+                        DEFAULT: "var(--muted)",
+                        foreground: "var(--muted-foreground)",
+                    },
+                    accent: {
+                        DEFAULT: "var(--accent)",
+                        foreground: "var(--accent-foreground)",
+                    },
+                    destructive: {
+                        DEFAULT: "var(--destructive)",
+                        foreground: "var(--destructive-foreground)",
+                    },
+                    border: "var(--border)",
+                    input: "var(--input)",
+                    ring: "var(--ring)",
+                },
+                fontFamily: {
+                    sans: ["Noto Sans", "system-ui", "sans-serif"],
+                    malayalam: ["Noto Sans Malayalam", "sans-serif"],
+                }
+            }
+        }
+    };
+    </script>
+    
+    <style>
+        :root {
+            --background: hsl(208 100% 97%);
+            --foreground: hsl(180 25% 31%);
+            --card: hsl(0 0% 100%);
+            --card-foreground: hsl(180 25% 31%);
+            --primary: hsl(120 61% 34%);
+            --primary-foreground: hsl(0 0% 98%);
+            --secondary: hsl(32 100% 50%);
+            --secondary-foreground: hsl(0 0% 98%);
+            --muted: hsl(208 38% 95%);
+            --muted-foreground: hsl(180 10% 45%);
+            --accent: hsl(51 100% 50%);
+            --accent-foreground: hsl(180 25% 31%);
+            --destructive: hsl(348 83% 47%);
+            --destructive-foreground: hsl(0 0% 98%);
+            --border: hsl(208 82% 90%);
+            --input: hsl(208 82% 90%);
+            --ring: hsl(120 61% 34%);
+            --radius: 12px;
+        }
+
+        .voice-wave {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+        }
+
+        .wave-bar {
+            width: 3px;
+            background: var(--accent);
+            border-radius: 2px;
+            animation: wave 1.5s ease-in-out infinite;
+        }
+
+        .wave-bar:nth-child(1) { height: 10px; animation-delay: 0s; }
+        .wave-bar:nth-child(2) { height: 15px; animation-delay: 0.1s; }
+        .wave-bar:nth-child(3) { height: 20px; animation-delay: 0.2s; }
+        .wave-bar:nth-child(4) { height: 15px; animation-delay: 0.3s; }
+        .wave-bar:nth-child(5) { height: 10px; animation-delay: 0.4s; }
+
+        @keyframes wave {
+            0%, 100% { transform: scaleY(1); }
+            50% { transform: scaleY(2); }
+        }
+
+        .weather-icon {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        .language-active {
+            background: var(--primary);
+            color: var(--primary-foreground);
+        }
+
+        .alert-blink {
+            animation: blink 1s linear infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0.7; }
+        }
+    </style>
+</head>
+<body class="bg-background text-foreground font-sans min-h-screen">
+    <!-- @COMPONENT: Header [language selector and location status] -->
+    <header class="bg-card shadow-lg border-b-4 border-primary sticky top-0 z-50">
+        <div class="max-w-md mx-auto px-4 py-4 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
+                    <i class="fas fa-seedling text-primary-foreground text-lg"></i>
+                </div>
+                <h1 class="text-lg font-bold text-foreground">Kerala Farmers AI</h1>
+            </div>
+            
+            <!-- Language Selector -->
+            <div class="flex space-x-1">
+                <button class="language-btn px-2 py-1 text-xs font-medium rounded language-active" data-lang="en">EN</button>
+                <button class="language-btn px-2 py-1 text-xs font-medium rounded bg-muted text-muted-foreground" data-lang="ml">മലയാളം</button>
+                <button class="language-btn px-2 py-1 text-xs font-medium rounded bg-muted text-muted-foreground" data-lang="ta">தமிழ்</button>
+                <button class="language-btn px-2 py-1 text-xs font-medium rounded bg-muted text-muted-foreground" data-lang="hi">हिं</button>
+            </div>
+        </div>
+        
+        <!-- Location Status -->
+        <div class="bg-primary text-primary-foreground px-4 py-2">
+            <div class="max-w-md mx-auto flex items-center space-x-2 text-sm">
+                <i class="fas fa-map-marker-alt text-accent pulse"></i>
+                <span data-bind="location.district">Ernakulam, Kerala</span>
+                <span class="text-xs bg-green-500 px-2 py-1 rounded">GPS Active</span>
+            </div>
+        </div>
+    </header>
+    <!-- @END_COMPONENT: Header -->
+
+    <main class="max-w-md mx-auto px-4 pb-20">
+        <!-- @COMPONENT: VoiceAssistant [main voice interface] -->
+        <section class="py-6">
+            <div class="bg-card rounded-3xl shadow-xl border border-border p-6 text-center">
+                <div class="mb-4">
+                    <div class="w-24 h-24 bg-gradient-to-br from-primary to-secondary rounded-full mx-auto flex items-center justify-center mb-4 voice-assistant-btn cursor-pointer transition-transform hover:scale-105">
+                        <i class="fas fa-microphone text-3xl text-white"></i>
+                    </div>
+                    <p class="text-lg font-semibold text-foreground mb-2" data-text="voice-prompt">Tap to speak with your AI assistant</p>
+                    <p class="text-sm text-muted-foreground" data-text="voice-help">Ask about weather, crops, or farming advice</p>
+                </div>
+                
+                <!-- Voice Waveform (Hidden by default) -->
+                <div class="voice-wave-container hidden mb-4">
+                    <div class="voice-wave">
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                    </div>
+                    <p class="text-sm text-muted-foreground mt-2">Listening...</p>
+                </div>
+                
+                <!-- Voice Response -->
+                <div class="voice-response hidden bg-muted rounded-xl p-4 text-left">
+                    <p class="text-sm text-muted-foreground mb-1">AI Assistant:</p>
+                    <p class="text-foreground"></p>
+                </div>
+            </div>
+        </section>
+        <!-- @END_COMPONENT: VoiceAssistant -->
+
+        <!-- @COMPONENT: WeatherDashboard [current weather and alerts] -->
+        <section class="mb-6">
+            <h2 class="text-xl font-bold text-foreground mb-4 flex items-center">
+                <i class="fas fa-cloud-sun text-primary mr-2"></i>
+                <span data-text="weather-title">Weather & Alerts</span>
+            </h2>
+            
+            <!-- Current Weather -->
+            <div class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl p-6 text-white mb-4 shadow-lg">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h3 class="text-lg font-semibold">Today's Weather</h3>
+                        <p class="text-sm opacity-90" data-bind="weather.location">Ernakulam District</p>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-3xl font-bold" data-bind="weather.temperature">28°C</div>
+                        <div class="text-sm opacity-90" data-bind="weather.condition">Partly Cloudy</div>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-3 gap-4 text-center">
+                    <div>
+                        <i class="fas fa-tint text-blue-200 mb-1"></i>
+                        <div class="text-sm">Humidity</div>
+                        <div class="font-semibold" data-bind="weather.humidity">75%</div>
+                    </div>
+                    <div>
+                        <i class="fas fa-wind text-blue-200 mb-1"></i>
+                        <div class="text-sm">Wind</div>
+                        <div class="font-semibold" data-bind="weather.wind">12 km/h</div>
+                    </div>
+                    <div>
+                        <i class="fas fa-eye text-blue-200 mb-1"></i>
+                        <div class="text-sm">Visibility</div>
+                        <div class="font-semibold" data-bind="weather.visibility">10 km</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Weather Alert -->
+            <div class="bg-destructive text-destructive-foreground rounded-xl p-4 mb-4 alert-blink">
+                <div class="flex items-start space-x-3">
+                    <i class="fas fa-exclamation-triangle text-xl"></i>
+                    <div>
+                        <h4 class="font-semibold mb-1">Heavy Rain Alert</h4>
+                        <p class="text-sm opacity-90">Expected rainfall 50-75mm in next 6 hours. Take necessary precautions for your crops.</p>
+                        <p class="text-xs mt-2 opacity-75">Issued: Today, 2:30 PM</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- @END_COMPONENT: WeatherDashboard -->
+
+        <!-- @COMPONENT: QuickActions [main action buttons] -->
+        <section class="mb-6">
+            <h2 class="text-xl font-bold text-foreground mb-4 flex items-center">
+                <i class="fas fa-bolt text-secondary mr-2"></i>
+                <span data-text="quick-actions">Quick Actions</span>
+            </h2>
+            
+            <div class="grid grid-cols-2 gap-4">
+                <button class="bg-card border border-border rounded-2xl p-4 shadow-lg hover:shadow-xl transition-shadow">
+                    <div class="text-primary text-2xl mb-2">
+                        <i class="fas fa-seedling"></i>
+                    </div>
+                    <h3 class="font-semibold text-foreground mb-1">Crop Guidance</h3>
+                    <p class="text-xs text-muted-foreground">Get planting advice</p>
+                </button>
+                
+                <button class="bg-card border border-border rounded-2xl p-4 shadow-lg hover:shadow-xl transition-shadow">
+                    <div class="text-secondary text-2xl mb-2">
+                        <i class="fas fa-bug"></i>
+                    </div>
+                    <h3 class="font-semibold text-foreground mb-1">Pest Control</h3>
+                    <p class="text-xs text-muted-foreground">Identify & treat pests</p>
+                </button>
+                
+                <button class="bg-card border border-border rounded-2xl p-4 shadow-lg hover:shadow-xl transition-shadow">
+                    <div class="text-accent text-2xl mb-2">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3 class="font-semibold text-foreground mb-1">Market Prices</h3>
+                    <p class="text-xs text-muted-foreground">Current crop prices</p>
+                </button>
+                
+                <button class="bg-card border border-border rounded-2xl p-4 shadow-lg hover:shadow-xl transition-shadow">
+                    <div class="text-primary text-2xl mb-2">
+                        <i class="fas fa-calendar"></i>
+                    </div>
+                    <h3 class="font-semibold text-foreground mb-1">Farm Calendar</h3>
+                    <p class="text-xs text-muted-foreground">Seasonal planning</p>
+                </button>
+            </div>
+        </section>
+        <!-- @END_COMPONENT: QuickActions -->
+
+        <!-- @COMPONENT: SoilAnalysis [soil information] -->
+        <section class="mb-6">
+            <h2 class="text-xl font-bold text-foreground mb-4 flex items-center">
+                <i class="fas fa-mountain text-primary mr-2"></i>
+                <span data-text="soil-analysis">Soil Analysis</span>
+            </h2>
+            
+            <div class="bg-card rounded-2xl shadow-lg border border-border p-5">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h3 class="text-lg font-semibold text-foreground">Your Soil Type</h3>
+                        <p class="text-sm text-muted-foreground">Based on GPS location</p>
+                    </div>
+                    <div class="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-layer-group text-amber-600 text-xl"></i>
+                    </div>
+                </div>
+                
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center">
+                        <span class="text-foreground">Soil Type:</span>
+                        <span class="font-semibold text-primary" data-bind="soil.type">Lateritic Soil</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-foreground">pH Level:</span>
+                        <span class="font-semibold text-secondary" data-bind="soil.ph">6.2 (Slightly Acidic)</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-foreground">Fertility:</span>
+                        <span class="font-semibold text-accent" data-bind="soil.fertility">Moderate</span>
+                    </div>
+                </div>
+                
+                <div class="mt-4 p-3 bg-muted rounded-xl">
+                    <p class="text-sm text-foreground">
+                        <i class="fas fa-lightbulb text-accent mr-2"></i>
+                        <strong>Recommendation:</strong> Suitable for rice, coconut, and spice cultivation. Consider organic fertilizers to improve fertility.
+                    </p>
+                </div>
+            </div>
+        </section>
+        <!-- @END_COMPONENT: SoilAnalysis -->
+
+        <!-- @COMPONENT: WhatsAppAlerts [messaging system interface] -->
+        <section class="mb-6">
+            <h2 class="text-xl font-bold text-foreground mb-4 flex items-center">
+                <i class="fab fa-whatsapp text-green-500 mr-2"></i>
+                <span data-text="whatsapp-alerts">WhatsApp Alerts</span>
+                <span class="bg-green-500 text-white text-xs px-2 py-1 rounded-full ml-2">Active</span>
+            </h2>
+            
+            <div class="bg-card rounded-2xl shadow-lg border border-border overflow-hidden">
+                <!-- WhatsApp Header -->
+                <div class="bg-green-500 text-white p-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold">Kerala Farmers Bot</h3>
+                            <p class="text-xs opacity-90">Online • Automated alerts enabled</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Recent Messages -->
+                <div class="p-4 space-y-3 max-h-64 overflow-y-auto">
+                    <!-- Bot Message -->
+                    <div class="flex items-start space-x-2">
+                        <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-robot text-white text-xs"></i>
+                        </div>
+                        <div class="bg-gray-100 rounded-2xl rounded-tl-md p-3 max-w-xs">
+                            <p class="text-sm text-gray-800">🌧️ Heavy rain expected tomorrow. Cover your young plants and ensure proper drainage.</p>
+                            <p class="text-xs text-gray-500 mt-1">2:30 PM</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Bot Message -->
+                    <div class="flex items-start space-x-2">
+                        <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-robot text-white text-xs"></i>
+                        </div>
+                        <div class="bg-gray-100 rounded-2xl rounded-tl-md p-3 max-w-xs">
+                            <p class="text-sm text-gray-800">📊 Market Update: Rice prices increased by ₹50 per quintal in Ernakulam market.</p>
+                            <p class="text-xs text-gray-500 mt-1">11:15 AM</p>
+                        </div>
+                    </div>
+                    
+                    <!-- User Message -->
+                    <div class="flex justify-end">
+                        <div class="bg-green-500 text-white rounded-2xl rounded-tr-md p-3 max-w-xs">
+                            <p class="text-sm">Thank you for the updates! 🙏</p>
+                            <p class="text-xs opacity-75 mt-1">11:16 AM</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Alert Settings -->
+                <div class="border-t border-border p-4 bg-muted">
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-foreground">Alert Settings</span>
+                        <button class="text-primary hover:text-primary/80">
+                            <i class="fas fa-cog"></i>
+                        </button>
+                    </div>
+                    <div class="mt-2 space-y-1">
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="text-muted-foreground">Weather Alerts</span>
+                            <span class="text-green-600 font-medium">✓ Enabled</span>
+                        </div>
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="text-muted-foreground">Market Updates</span>
+                            <span class="text-green-600 font-medium">✓ Enabled</span>
+                        </div>
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="text-muted-foreground">Farming Tips</span>
+                            <span class="text-green-600 font-medium">✓ Enabled</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- @END_COMPONENT: WhatsAppAlerts -->
+
+        <!-- @COMPONENT: RecentActivity [activity feed] -->
+        <section class="mb-6">
+            <h2 class="text-xl font-bold text-foreground mb-4 flex items-center">
+                <i class="fas fa-history text-muted-foreground mr-2"></i>
+                <span data-text="recent-activity">Recent Activity</span>
+            </h2>
+            
+            <div class="space-y-3">
+                <div class="bg-card rounded-xl border border-border p-4 flex items-start space-x-3">
+                    <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-cloud-rain text-blue-600"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-semibold text-foreground">Weather Alert Sent</h3>
+                        <p class="text-sm text-muted-foreground">Heavy rain warning for next 6 hours</p>
+                        <p class="text-xs text-muted-foreground mt-1">2 hours ago</p>
+                    </div>
+                </div>
+                
+                <div class="bg-card rounded-xl border border-border p-4 flex items-start space-x-3">
+                    <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-microphone text-green-600"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-semibold text-foreground">Voice Query</h3>
+                        <p class="text-sm text-muted-foreground">Asked about pest control for coconut trees</p>
+                        <p class="text-xs text-muted-foreground mt-1">Yesterday, 4:20 PM</p>
+                    </div>
+                </div>
+                
+                <div class="bg-card rounded-xl border border-border p-4 flex items-start space-x-3">
+                    <div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-chart-line text-orange-600"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-semibold text-foreground">Market Price Check</h3>
+                        <p class="text-sm text-muted-foreground">Checked rice prices in local market</p>
+                        <p class="text-xs text-muted-foreground mt-1">Yesterday, 11:15 AM</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- @END_COMPONENT: RecentActivity -->
+    </main>
+
+    <!-- @COMPONENT: BottomNavigation [sticky bottom navigation] -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-card border-t border-border shadow-lg">
+        <div class="max-w-md mx-auto px-4 py-3">
+            <div class="flex justify-around">
+                <button class="flex flex-col items-center space-y-1 p-2">
+                    <i class="fas fa-home text-primary text-lg"></i>
+                    <span class="text-xs text-primary font-medium">Home</span>
+                </button>
+                <button class="flex flex-col items-center space-y-1 p-2">
+                    <i class="fas fa-cloud-sun text-muted-foreground text-lg"></i>
+                    <span class="text-xs text-muted-foreground">Weather</span>
+                </button>
+                <button class="flex flex-col items-center space-y-1 p-2">
+                    <i class="fas fa-seedling text-muted-foreground text-lg"></i>
+                    <span class="text-xs text-muted-foreground">Crops</span>
+                </button>
+                <button class="flex flex-col items-center space-y-1 p-2">
+                    <i class="fab fa-whatsapp text-muted-foreground text-lg"></i>
+                    <span class="text-xs text-muted-foreground">Alerts</span>
+                </button>
+                <button class="flex flex-col items-center space-y-1 p-2">
+                    <i class="fas fa-cog text-muted-foreground text-lg"></i>
+                    <span class="text-xs text-muted-foreground">Settings</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+    <!-- @END_COMPONENT: BottomNavigation -->
+
+    <script>
+        // Language switching functionality
+        (function() {
+            const languageTexts = {
+                en: {
+                    'voice-prompt': 'Tap to speak with your AI assistant',
+                    'voice-help': 'Ask about weather, crops, or farming advice',
+                    'weather-title': 'Weather & Alerts',
+                    'quick-actions': 'Quick Actions',
+                    'soil-analysis': 'Soil Analysis',
+                    'whatsapp-alerts': 'WhatsApp Alerts',
+                    'recent-activity': 'Recent Activity'
+                },
+                ml: {
+                    'voice-prompt': 'എഐ സഹായിയുമായി സംസാരിക്കാൻ ടാപ്പ് ചെയ്യുക',
+                    'voice-help': 'കാലാവസ്ഥ, വിളകൾ അല്ലെങ്കിൽ കൃഷി ഉപദേശം ചോദിക്കുക',
+                    'weather-title': 'കാലാവസ്ഥയും മുന്നറിയിപ്പുകളും',
+                    'quick-actions': 'ദ്രുത പ്രവർത്തനങ്ങൾ',
+                    'soil-analysis': 'മണ്ണ് വിശകലനം',
+                    'whatsapp-alerts': 'വാട്സാപ്പ് അലേർട്ടുകൾ',
+                    'recent-activity': 'സമീപകാല പ്രവർത്തനം'
+                },
+                ta: {
+                    'voice-prompt': 'AI உதவியாளருடன் பேச தட்டவும்',
+                    'voice-help': 'வானிலை, பயிர்கள் அல்லது விவசாய ஆலோசனை கேளுங்கள்',
+                    'weather-title': 'வானிலை மற்றும் எச்சரிக்கைகள்',
+                    'quick-actions': 'விரைவு செயல்கள்',
+                    'soil-analysis': 'மண் பகுப்பாய்வு',
+                    'whatsapp-alerts': 'வாட்ஸ்அப் எச்சரிக்கைகள்',
+                    'recent-activity': 'சமீபத்திய செயல்பாடு'
+                },
+                hi: {
+                    'voice-prompt': 'AI सहायक से बात करने के लिए टैप करें',
+                    'voice-help': 'मौसम, फसल या खेती की सलाह के बारे में पूछें',
+                    'weather-title': 'मौसम और अलर्ट',
+                    'quick-actions': 'त्वरित कार्य',
+                    'soil-analysis': 'मिट्टी विश्लेषण',
+                    'whatsapp-alerts': 'व्हाट्सऐप अलर्ट',
+                    'recent-activity': 'हाल की गतिविधि'
+                }
+            };
+
+            const languageButtons = document.querySelectorAll('.language-btn');
+            const textElements = document.querySelectorAll('[data-text]');
+
+            function switchLanguage(lang) {
+                // Update active button
+                languageButtons.forEach(btn => {
+                    btn.classList.remove('language-active');
+                    btn.classList.add('bg-muted', 'text-muted-foreground');
+                });
+                
+                const activeBtn = document.querySelector(`[data-lang="${lang}"]`);
+                activeBtn.classList.add('language-active');
+                activeBtn.classList.remove('bg-muted', 'text-muted-foreground');
+
+                // Update text content
+                textElements.forEach(element => {
+                    const textKey = element.getAttribute('data-text');
+                    if (languageTexts[lang] && languageTexts[lang][textKey]) {
+                        element.textContent = languageTexts[lang][textKey];
+                    }
+                });
+
+                // Update font family for Malayalam
+                if (lang === 'ml') {
+                    document.body.classList.add('font-malayalam');
+                    document.body.classList.remove('font-sans');
+                } else {
+                    document.body.classList.add('font-sans');
+                    document.body.classList.remove('font-malayalam');
+                }
+            }
+
+            // Add event listeners to language buttons
+            languageButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    switchLanguage(button.getAttribute('data-lang'));
+                });
+            });
+        })();
+
+        // Voice Assistant functionality
+        (function() {
+            const voiceButton = document.querySelector('.voice-assistant-btn');
+            const waveContainer = document.querySelector('.voice-wave-container');
+            const voiceResponse = document.querySelector('.voice-response');
+            let isListening = false;
+
+            // Mock responses for demonstration
+            const mockResponses = {
+                en: [
+                    "Based on current weather data, I recommend delaying planting until after tomorrow's heavy rain.",
+                    "Your coconut trees might have scale insects. Try neem oil spray in the evening.",
+                    "Rice prices have increased by ₹50 per quintal in Ernakulam market today.",
+                    "The soil moisture looks good for your pepper plants. Continue current watering schedule."
+                ],
+                ml: [
+                    "നിലവിലെ കാലാവസ്ഥാ ഡാറ്റയുടെ അടിസ്ഥാനത്തിൽ, നാളത്തെ കനത്ത മഴയ്ക്ക് ശേഷം നടീൽ വൈകിപ്പിക്കാൻ ഞാൻ ശുപാർശ ചെയ്യുന്നു.",
+                    "നിങ്ങളുടെ തെങ്ങുകൾക്ക് സ്കെയിൽ പുഴുക്കൾ ഉണ്ടാകാം. വൈകുന്നേരം നീമെണ്ണ തളിക്കാൻ ശ്രമിക്കുക.",
+                ]
+            };
+
+            function startListening() {
+                isListening = true;
+                voiceButton.style.background = 'linear-gradient(45deg, #DC143C, #FF6B6B)';
+                waveContainer.classList.remove('hidden');
+                
+                // Simulate listening for 3 seconds
+                setTimeout(() => {
+                    stopListening();
+                    showResponse();
+                }, 3000);
+            }
+
+            function stopListening() {
+                isListening = false;
+                voiceButton.style.background = 'linear-gradient(to bottom right, var(--primary), var(--secondary))';
+                waveContainer.classList.add('hidden');
+            }
+
+            function showResponse() {
+                const currentLang = document.querySelector('.language-active').getAttribute('data-lang');
+                const responses = mockResponses[currentLang] || mockResponses.en;
+                const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+                
+                voiceResponse.classList.remove('hidden');
+                voiceResponse.querySelector('p:last-child').textContent = randomResponse;
+                
+                // Hide response after 5 seconds
+                setTimeout(() => {
+                    voiceResponse.classList.add('hidden');
+                }, 5000);
+            }
+
+            voiceButton.addEventListener('click', () => {
+                if (!isListening) {
+                    startListening();
+                }
+            });
+
+            // TODO: Implement actual Web Speech API integration
+            // TODO: Connect to real AI backend for agricultural advice
+            // TODO: Add text-to-speech for voice responses
+        })();
+
+        // Mock real-time data updates
+        (function() {
+            const weatherTemp = document.querySelector('[data-bind="weather.temperature"]');
+            const weatherHumidity = document.querySelector('[data-bind="weather.humidity"]');
+            
+            function updateWeatherData() {
+                // Simulate small weather changes
+                const baseTemp = 28;
+                const baseHumidity = 75;
+                const tempVariation = Math.floor(Math.random() * 4) - 2; // -2 to +2
+                const humidityVariation = Math.floor(Math.random() * 10) - 5; // -5 to +5
+                
+                if (weatherTemp) {
+                    weatherTemp.textContent = `${baseTemp + tempVariation}°C`;
+                }
+                if (weatherHumidity) {
+                    weatherHumidity.textContent = `${Math.max(60, Math.min(90, baseHumidity + humidityVariation))}%`;
+                }
+            }
+
+            // Update weather data every 30 seconds
+            setInterval(updateWeatherData, 30000);
+        })();
+
+        // TODO: Implement GPS location services
+        // TODO: Connect to real weather API
+        // TODO: Integrate WhatsApp Business API
+        // TODO: Add offline mode functionality
+        // TODO: Implement push notifications
+        // TODO: Connect to agricultural database
+        // TODO: Add user authentication
+        // TODO: Implement data persistence
+    </script>
+</body>
+</html>

@@ -1,0 +1,188 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600;700&family=Noto+Sans+Malayalam:wght@300;400;500;600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(208, 100%, 97%);
+  --foreground: hsl(180, 25%, 31%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(180, 25%, 31%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(180, 25%, 31%);
+  --primary: hsl(120, 61%, 34%);
+  --primary-foreground: hsl(0, 0%, 98%);
+  --secondary: hsl(32, 100%, 50%);
+  --secondary-foreground: hsl(0, 0%, 98%);
+  --muted: hsl(208, 38%, 95%);
+  --muted-foreground: hsl(180, 10%, 45%);
+  --accent: hsl(51, 100%, 50%);
+  --accent-foreground: hsl(180, 25%, 31%);
+  --destructive: hsl(348, 83%, 47%);
+  --destructive-foreground: hsl(0, 0%, 98%);
+  --border: hsl(208, 82%, 90%);
+  --input: hsl(208, 82%, 90%);
+  --ring: hsl(120, 61%, 34%);
+  --chart-1: hsl(120, 61%, 34%);
+  --chart-2: hsl(159, 78%, 42%);
+  --chart-3: hsl(42, 93%, 56%);
+  --chart-4: hsl(147, 78%, 42%);
+  --chart-5: hsl(341, 75%, 51%);
+  --sidebar: hsl(0, 0%, 100%);
+  --sidebar-foreground: hsl(180, 25%, 31%);
+  --sidebar-primary: hsl(120, 61%, 34%);
+  --sidebar-primary-foreground: hsl(0, 0%, 98%);
+  --sidebar-accent: hsl(208, 38%, 95%);
+  --sidebar-accent-foreground: hsl(120, 61%, 34%);
+  --sidebar-border: hsl(208, 82%, 90%);
+  --sidebar-ring: hsl(120, 61%, 34%);
+  --font-sans: "Noto Sans", system-ui, sans-serif;
+  --font-malayalam: "Noto Sans Malayalam", sans-serif;
+  --font-serif: Georgia, serif;
+  --font-mono: Menlo, monospace;
+  --radius: 12px;
+  --agricultural-green: hsl(120, 61%, 34%);
+  --harvest-orange: hsl(32, 100%, 50%);
+  --sky-blue: hsl(208, 100%, 97%);
+  --dark-slate-grey: hsl(180, 25%, 31%);
+  --golden-yellow: hsl(51, 100%, 50%);
+  --crimson-red: hsl(348, 83%, 47%);
+}
+
+.dark {
+  --background: hsl(0, 0%, 3.9%);
+  --foreground: hsl(0, 0%, 98%);
+  --card: hsl(0, 0%, 3.9%);
+  --card-foreground: hsl(0, 0%, 98%);
+  --popover: hsl(0, 0%, 3.9%);
+  --popover-foreground: hsl(0, 0%, 98%);
+  --primary: hsl(120, 61%, 34%);
+  --primary-foreground: hsl(0, 0%, 98%);
+  --secondary: hsl(32, 100%, 50%);
+  --secondary-foreground: hsl(0, 0%, 98%);
+  --muted: hsl(0, 0%, 14.9%);
+  --muted-foreground: hsl(0, 0%, 63.9%);
+  --accent: hsl(51, 100%, 50%);
+  --accent-foreground: hsl(0, 0%, 9%);
+  --destructive: hsl(348, 83%, 47%);
+  --destructive-foreground: hsl(0, 0%, 98%);
+  --border: hsl(0, 0%, 14.9%);
+  --input: hsl(0, 0%, 14.9%);
+  --ring: hsl(120, 61%, 34%);
+  --chart-1: hsl(120, 61%, 34%);
+  --chart-2: hsl(159, 78%, 42%);
+  --chart-3: hsl(42, 93%, 56%);
+  --chart-4: hsl(147, 78%, 42%);
+  --chart-5: hsl(341, 75%, 51%);
+  --sidebar: hsl(0, 0%, 3.9%);
+  --sidebar-foreground: hsl(0, 0%, 98%);
+  --sidebar-primary: hsl(120, 61%, 34%);
+  --sidebar-primary-foreground: hsl(0, 0%, 98%);
+  --sidebar-accent: hsl(0, 0%, 14.9%);
+  --sidebar-accent-foreground: hsl(120, 61%, 34%);
+  --sidebar-border: hsl(0, 0%, 14.9%);
+  --sidebar-ring: hsl(120, 61%, 34%);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: var(--font-sans);
+  }
+
+  .font-malayalam {
+    font-family: var(--font-malayalam);
+  }
+}
+
+/* Voice Assistant Animations */
+.voice-wave {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+
+.wave-bar {
+  width: 3px;
+  background: var(--accent);
+  border-radius: 2px;
+  animation: wave 1.5s ease-in-out infinite;
+}
+
+.wave-bar:nth-child(1) { height: 10px; animation-delay: 0s; }
+.wave-bar:nth-child(2) { height: 15px; animation-delay: 0.1s; }
+.wave-bar:nth-child(3) { height: 20px; animation-delay: 0.2s; }
+.wave-bar:nth-child(4) { height: 15px; animation-delay: 0.3s; }
+.wave-bar:nth-child(5) { height: 10px; animation-delay: 0.4s; }
+
+@keyframes wave {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(2); }
+}
+
+/* Weather Icon Animation */
+.weather-icon {
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+/* Pulse Animation */
+.pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Language Active State */
+.language-active {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+/* Alert Blink Animation */
+.alert-blink {
+  animation: blink 1s linear infinite;
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0.7; }
+}
+
+/* Voice Assistant Button Gradient */
+.voice-assistant-btn {
+  background: linear-gradient(to bottom right, var(--primary), var(--secondary));
+  transition: all 0.3s ease;
+}
+
+.voice-assistant-btn:hover {
+  transform: scale(1.05);
+}
+
+.voice-assistant-listening {
+  background: linear-gradient(45deg, var(--destructive), #ff6b6b) !important;
+}
+
+/* High contrast mode for outdoor visibility */
+@media (prefers-contrast: high) {
+  :root {
+    --foreground: hsl(180, 25%, 15%);
+    --background: hsl(0, 0%, 100%);
+    --border: hsl(0, 0%, 20%);
+  }
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
